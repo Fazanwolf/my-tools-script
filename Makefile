@@ -6,7 +6,7 @@ DISCORD_LINK	=	"https://discord.com/api/download?platform=linux&format=deb"
 
 TEAMS_LINK	=	"https://go.microsoft.com/fwlink/p/?LinkID=2112886&clcid=0x409&culture=en-us&country=US"
 
-JETBRAIN_LINK	=	"https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.25.12627.tar.gzp"
+JETBRAIN_LINK	=	"https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.25.12627.tar.gz"
 
 COMPASS_LINK	=	"https://downloads.mongodb.com/compass/mongodb-compass_1.33.0_amd64.deb"
 
@@ -124,12 +124,12 @@ vscode:
 	@$(RM) /tmp/vscode.deb
 	@echo "Vscode: Done!"
 
-jetbrain: line-break
+jetbrain:
 	@$(LINE-BREAK)
 	@echo "JetBrain: Downloading..."
 	@$(RM) /tmp/jetbrain.tar.gz
 	@wget $(JETBRAIN_LINK) -O /tmp/jetbrain.tar.gz
-	@tar -xvf /tmp/toolbox.tar.gz
+	@tar -xvf /tmp/jetbrain.tar.gz -C ~/Documents
 
 # Development ---------------------------------------
 
@@ -138,7 +138,7 @@ jetbrain: line-break
 postman:
 	@$(LINE-BREAK)
 	@echo "Postman: Downloading..."
-	@$(RF) /tmp/postman.tar.gz
+	@$(RM) /tmp/postman.tar.gz
 	@wget $(POSTMAN_LINK) -O /tmp/postman.tar.gz
 	@echo "Postman: Decompression..."
 	@tar -xzf /tmp/postman-linux-x64.tar.gz -C /opt
@@ -177,12 +177,27 @@ dump-fedora:
 
 nvidia-driver:
 	@$(LINE_BREAK)
+	@apt install nvidia-driver-510 nvidia-dkms-510
+
+nvm:
+	@$(LINE_BREAK)
+	@curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+	@source ~/.profile && nvm install 12
+	@source ~/.profile && nvm install 17
+
+docker:
+	@$(LINE_BREAK)
+	@sudo apt install -y docker.io docker-compose
+	@sudo groupadd -f docker
+	@sudo usermod -aG docker ${USER}
+	@newgrp docker
 
 dbuild: dclean
-	docker build . -t test-script:v1
+	@docker build . -t test-script:v1
 
 drun:
-	docker run -it test-script:v1 /bin/bash
+	@docker run -it test-script:v1 /bin/bash
+	
 
 dclean:
 	@echo "Container:"
